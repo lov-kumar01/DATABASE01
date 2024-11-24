@@ -19,10 +19,14 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(cookieParser());
 
+
+
+
+//'mongodb://username:password@host:port/database?options...'
 // Connect to MongoDB
-const dburl = process.env.DB_URL || "development";
-console.log( dburl);
-mongoose.connect(String(dburl))
+//const dburl = process.env.DB_URL || "development";
+//console.log( dburl);
+mongoose.connect("mongodb+srv://lovkumar:0987654321@cluster0.h6esa.mongodb.net/iti?retryWrites=true&=majorityappName=Cluster0")
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
