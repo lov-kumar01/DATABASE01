@@ -26,10 +26,20 @@ app.use(cookieParser());
 // Connect to MongoDB
 //const dburl = process.env.DB_URL || "development";
 //console.log( dburl);
-mongoose.connect("mongodb+srv://lovkumar:0987654321@cluster0.h6esa.mongodb.net/iti?retryWrites=true&=majorityappName=Cluster0")
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.error('MongoDB connection error:', err));
-
+// mongoose.connect("mongodb+srv://lovkumar:0987654321@cluster0.h6esa.mongodb.net/iti?retryWrites=true&=majorityappName=Cluster0")
+    // .then(() => console.log('MongoDB connected'))
+    // .catch(err => console.error('MongoDB connection error:', err));
+    const connectDB = async () => {
+        try {
+            const connectionInstance = await mongoose.connect(process.env.DB_URL);
+           // console.log(MONGODB CONNECTED !! ${connectionInstance.connection.host});
+           console.log("mongodb connectDB");
+        } catch (error) {
+            console.error("Connection error:", error);
+        }
+    };
+    
+    connectDB();
 // Sample data
 let data = [
     { username: 'user1', courses: 'Math, Science', year: 2021, fee: 5000, session: "2021-2024" },
