@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attractive Table</title>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="number"] {
+            margin: 5px;
+            padding: 10px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Username</th>
+                    <th>Courses</th>
+                    <th>Year</th>
+                    <th>session</th>
+                    <th>Fee</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(function(item, index) { %>
+                    <tr>
+                        <td><%= item._id %></td>
+                        <td><%= item.username %></td>
+                        <td><%= item.courses %></td>
+                        <td><%= item.year %></td>
+                        <td><%= item.session %></td>
+                        <td><%= item.fee %></td>
+                        <td>
+                            <button onclick="openModal('<%= index %>', '<%=item._id %>', '<%= item.username %>', '<%= item.course %>', '<%= item.year %>', '<%= item.fee %>' ,'<%= item.session %>')">Update</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <form action="/add" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="courses" placeholder="Courses" required>
+            <input type="number" name="year" placeholder="Year" required>
+            <input type="number" name="fee" placeholder="Fee" required>
+            <input type="submit" value="Add Data">
+        </form>
+    </div>
+
+    <div id="updateModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="updateForm">
+                <input type="hidden" name="_id" id="_id">
+                <input type="text" name="username" id="updateUsername" placeholder="Username" required>
+                <input type="text" name="courses" id="updateCourses" placeholder="Courses" required>
+                <input type="number" name="year" id="updateYear" placeholder="Year" required>
+                <input type="number" name="fee" id="updateFee" placeholder="Fee" required>
+                <input type="number" name="session" id="updateSession" placeholder="session" required>
+
+                <button type="button" id="updateButton">Update Data</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(index, id, username, courses, year, fee,session) {
+      console.log(courses);
+            document.getElementById('_id').value = id;
+            document.getElementById('updateUsername').value = username;
+            document.getElementById('updateCourses').value = courses;
+            document.getElementById('updateYear').value = year;
+            document.getElementById('updateFee').value = fee;
+            document.getElementById('updateSession').value = session;
+            
+            document.getElementById('updateModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('updateModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('updateModal')) {
+                closeModal();
+            }
+        }
+
+
+
+
+        document.getElementById('updateButton').addEventListener('click', async () => {
+    const formData = {
+        
+        id: document.getElementById('_id').value,
+        username: document.getElementById('updateUsername').value,
+        courses: document.getElementById('updateCourses').value,
+        year: document.getElementById('updateYear').value,
+        fee: document.getElementById('updateFee').value,
+        session: document.getElementById('updateSession').value,
+    };
+
+    console.log(formData);
+
+    try {
+        const response = await fetch('/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
+        console.log("response: ", response);
+        if (response.ok) {
+            alert('Data updated successfully!');
+            closeModal();
+        } else {
+            alert('Failed to update data.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+    </script>
+</body>
+</html>
