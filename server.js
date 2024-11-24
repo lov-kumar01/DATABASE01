@@ -23,14 +23,20 @@ app.use(cookieParser());
 
 
 const connectDB = async () => {
+    if (!process.env.MONGODB_URI) {
+        console.error("MONGODB_URI is not defined in the environment variables.");
+        process.exit(1); // Exit the application
+    }
+
     try {
         const connectionInstance = await mongoose.connect(process.env.MONGODB_URI, {
-           
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
         });
         console.log(`MONGODB CONNECTED !! ${connectionInstance.connection.host}`);
-        console.log("mongodb connectDB");
     } catch (error) {
         console.error("Connection error:", error);
+        process.exit(1); // Exit the application on error
     }
 };
 
@@ -57,13 +63,18 @@ app.get('/login', (req, res) => {
 
 app.post('/signup', async (req, res) => {
     const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required.' });
+    }
+
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ username, password: hashedPassword });
         await newUser.save();
-        res.status(201).json({ msg: 'User created' });
+        res.status(201).json({ msg: 'User created successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Error creating user' });
     }
 });
 
