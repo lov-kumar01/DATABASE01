@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, },
     session: { type: String },
     year: { type: Number },
-    course: { type: String },
+    courses: { type: String },
     fee: { type: Number },
 });
 

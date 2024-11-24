@@ -160,7 +160,7 @@ app.post('/add', async (req, res) => {
 app.put('/update', async (req, res) => {
 
     // console.log("req", req);
-    // console.log("req body", req.body);
+    console.log("req body", req.body);
     const {id, username, courses, year, fee,session} = req.body;
 //    const id = req.body.id;
    
