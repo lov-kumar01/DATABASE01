@@ -77,10 +77,10 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-app.get('/adminDashboard', async (req, res) => {
+app.get('/admin', async (req, res) => {
     try {
         const users = await User.find();
-        res.render('admindashboard', { users: users });
+        res.render('admindashboard', { users, errors: {}, formData: {} });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -139,20 +139,29 @@ app.get('/profile', authMiddleware, async (req, res) => {
 
 app.post('/add', async (req, res) => {
     const { username, courses, year, fee, session } = req.body;
+    let errors = {};
+
+    if (!username) errors.username = "Username is required";
+    if (!courses) errors.courses = "Courses are required";
+    if (!year) errors.year = "Year is required";
+    if (!fee) errors.fee = "Fee is required";
+    if (!session) errors.session = "Session is required";
+
+    if (Object.keys(errors).length > 0) {
+        const users = await User.find();
+        return res.render('admindashboard', { users, errors, formData: req.body });
+    }
 
     try {
         const newUser = new User({ username, courses, year: parseInt(year), fee: parseInt(fee), session });
-        const user = await newUser.save();
-
-        console.log("user>>", user);
-
-        if (!newUser) {
-            return res.status(500).json({ message: "something went wrong" });
-        }
-
-        res.redirect('/adminDashboard');
+        await newUser.save();
+        res.redirect('/thanku');
     } catch (err) {
-        console.log("error on add route: ", err);
+        if (err.code === 11000) {
+            errors.username = "Username already exists";
+            const users = await User.find();
+            return res.render('admindashboard', { users, errors, formData: req.body });
+        }
         res.status(500).json("internal server error");
     }
 });
@@ -191,6 +200,10 @@ app.put('/update', async (req, res) => {
         console.error("Error updating user:", error);
         res.status(500).send('Error updating user.');
     }
+});
+
+app.get('/thanku', (req, res) => {
+    res.render('ThankYou', { title: 'Thank You' });
 });
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

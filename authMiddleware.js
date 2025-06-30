@@ -18,26 +18,9 @@ const authMiddleware = (req, res, next) => {
     }
 };
 
-
-// import jwt from 'jsonwebtoken';
-// const SECRET_KEY = process.env.SECRET_KEY;
-
-// const authMiddleware = (req, res, next) => {
-//     const token = req.header('auth-token');
-//     if (!token) {
-//         console.log('No token provided'); // Debug log
-//         return res.status(401).send('Access Denied');
-//     }
-//       console.log ('Token received', Token);
-//     try {
-//         const verified = jwt.verify(token, SECRET_KEY);
-//         req.user = verified;
-//         console.log('Token verified:', verified); // Debug log
-//         next();
-//     } catch (err) {
-//         console.log('Invalid token'); // Debug log
-//         res.status(400).send('Invalid Token');
-//     }
-// };
+if (!process.env.MONGODB_URI) {
+    console.error("MONGODB_URI is not defined in the environment variables.");
+    process.exit(1); // Exit the application
+}
 
 export default authMiddleware;

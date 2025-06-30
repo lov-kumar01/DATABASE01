@@ -89,6 +89,12 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .error-msg {
+            color: red;
+            font-weight: bold;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -121,11 +127,37 @@
                 <% }); %>
             </tbody>
         </table>
-        <form action="/add" method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="text" name="courses" placeholder="Courses" required>
-            <input type="number" name="year" placeholder="Year" required>
-            <input type="number" name="fee" placeholder="Fee" required>
+        <form action="/add" method="POST" style="display: flex; flex-direction: column; width: 300px;">
+            <div style="display: flex; align-items: center;">
+                <input type="text" name="username" placeholder="Username" required value="<%= formData?.username || '' %>">
+                <% if (errors?.username) { %>
+                    <span class="error-msg"><%= errors.username %></span>
+                <% } %>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="text" name="courses" placeholder="Courses" required value="<%= formData?.courses || '' %>">
+                <% if (errors?.courses) { %>
+                    <span class="error-msg"><%= errors.courses %></span>
+                <% } %>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="number" name="year" placeholder="Year" required value="<%= formData?.year || '' %>">
+                <% if (errors?.year) { %>
+                    <span class="error-msg"><%= errors.year %></span>
+                <% } %>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="number" name="fee" placeholder="Fee" required value="<%= formData?.fee || '' %>">
+                <% if (errors?.fee) { %>
+                    <span class="error-msg"><%= errors.fee %></span>
+                <% } %>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <input type="text" name="session" placeholder="Session" required value="<%= formData?.session || '' %>">
+                <% if (errors?.session) { %>
+                    <span class="error-msg"><%= errors.session %></span>
+                <% } %>
+            </div>
             <input type="submit" value="Add Data">
         </form>
     </div>
