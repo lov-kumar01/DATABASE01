@@ -155,6 +155,7 @@ app.post('/add', async (req, res) => {
     try {
         const newUser = new User({ username, courses, year: parseInt(year), fee: parseInt(fee), session });
         await newUser.save();
+        // Redirect after successful add
         res.redirect('/thanku');
     } catch (err) {
         if (err.code === 11000) {
@@ -202,6 +203,7 @@ app.put('/update', async (req, res) => {
     }
 });
 
+// Route for thank you page
 app.get('/thanku', (req, res) => {
     res.render('ThankYou', { title: 'Thank You' });
 });
